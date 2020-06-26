@@ -21,25 +21,43 @@ exports.activate = (context) => {
         const location = editor.selection;
 
         const lines = filedata.split('\n')
-        const linesBefore = lines.slice(0, location.start.line)
+        const linesBefore = lines.slice(0, location.start.line + 1)
 
-        let lineNr = null
+        let lineNrTest = null
+        let lineNrExp = null
         for (let i = linesBefore.length - 1; i >= 0; --i) {
-            if (linesBefore[i].startsWith('    fmtest')) {
-                lineNr = i
-                break
+            if (linesBefore[i].startsWith('    fmtest') && lineNrTest === null) {
+                lineNrTest = i
+            }
+            if (linesBefore[i].startsWith('experiment') && lineNrExp === null) {
+                lineNrExp = i
             }
         }
 
-        if (lineNr === null) return
+        if (lineNrExp === null && lineNrTest === null) return
 
         editor.edit((editBuilder) => {
-            let newLine = lines[lineNr]
-            if (newLine.indexOf('fmtest.only') > -1) {
-                newLine = newLine.replace('fmtest.only', 'fmtest')
+
+            let lineNr
+            let newLine
+            if (lineNrTest === null) {
+                newLine = lines[lineNrExp]
+                if (newLine.indexOf('experiment.only') > -1) {
+                    newLine = newLine.replace('experiment.only', 'experiment')
+                } else {
+                    newLine = newLine.replace('experiment', 'experiment.only')
+                }
+                lineNr = lineNrExp
             } else {
-                newLine = newLine.replace('fmtest', 'fmtest.only')
+                newLine = lines[lineNrTest]
+                if (newLine.indexOf('fmtest.only') > -1) {
+                    newLine = newLine.replace('fmtest.only', 'fmtest')
+                } else {
+                    newLine = newLine.replace('fmtest', 'fmtest.only')
+                }
+                lineNr = lineNrTest
             }
+
             editBuilder.replace(new vscode.Range(lineNr, 0, lineNr, 1000), newLine)
         })
     })
