@@ -18,9 +18,12 @@
         "commands": [
             {
                 "command": "extension.toggleOnly",
-                "title": "Toggle test .only"
+                "title": "Toggle .only"
             }
-        ]
+        ],
+	"menus": {
+            "touchBar": [{"command": "extension.toggleOnly"}]
+        }
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
