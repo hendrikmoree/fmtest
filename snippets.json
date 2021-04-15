@@ -1,0 +1,233 @@
+{
+   "Print to console": {
+	   "prefix": "log",
+	   "body": "console.log($1)",
+	   "description": "Log output to console"
+   },
+   "Print to error": {
+	   "prefix": "error",
+	   "body": "console.error($1)",
+	   "description": "Log error to console"
+   },
+   "If main": {
+	   "prefix": "ifmain",
+	   "body": [
+		   "if (require.main === module) {",
+		   "\t$1()",
+		   "}"
+	   ]
+   },
+   "Test experiment": {
+	   "prefix": "lab-experiment",
+	   "body": [
+		   "'use strict'",
+		   "",
+		   "const { expect } = require('@hapi/code')",
+		   "const Mockery = require('mockery')",
+		   "",
+		   "const { experiment, before, after, afterEach, test } = exports.lab = require('@hapi/lab').script()",
+		   "const fmtest = require('@flitsmeister/test/utils').fmtest(test)",
+		   "",
+		   "const _this = this",
+		   "",
+		   "experiment('$1', () => {",
+		   "\tbefore(() => {",
+		   "\t\tMockery.enable({warnOnReplace: false, warnOnUnregistered: false, useCleanCache: true})",
+		   "\t})",
+		   "",
+		   "\tafter(() => {",
+		   "\t\tMockery.deregisterAll()",
+		   "\t\tMockery.disable()",
+		   "\t})",
+		   "",
+		   "\tafterEach(() => {",
+		   "\t})",
+		   "",
+		   "\tfmtest('$2', function *() {",
+		   "\t\t$0",
+		   "\t})",
+		   "})",
+		   ""
+	   ]
+   },
+   "Wreck Test experiment": {
+	   "prefix": "lab-wreck-experiment",
+	   "body": [
+		   "'use strict'",
+		   "",
+		   "const { expect } = require('@hapi/code')",
+		   "const Mockery = require('mockery')",
+		   "const WreckMock = require('@flitsmeister/test/mocks/wreck')",
+		   "",
+		   "const { experiment, before, after, afterEach, test } = exports.lab = require('@hapi/lab').script()",
+		   "const fmtest = require('@flitsmeister/test/utils').fmtest(test)",
+		   "",
+		   "const _this = this",
+		   "",
+		   "experiment('$1', () => {",
+		   "\tbefore(() => {",
+		   "\t\tMockery.enable({warnOnReplace: false, warnOnUnregistered: false, useCleanCache: true})",
+		   "\t\tMockery.registerMock('@hapi/wreck', WreckMock)",
+		   "\t})",
+		   "",
+		   "\tafter(() => {",
+		   "\t\tMockery.deregisterAll()",
+		   "\t\tMockery.disable()",
+		   "\t})",
+		   "",
+		   "\tafterEach(() => {",
+		   "\t\tWreckMock.clear()",
+		   "\t})",
+		   "",
+		   "\tfmtest('$2', function *() {",
+		   "\t\tWreckMock.addResponse($3)",
+		   "",
+		   "\t\texpect(WreckMock.calledMethods().length).to.equal($4)",
+		   "\t\texpect(WreckMock.calledMethod(0).url).to.equal('$5')",
+		   "\t\texpect(WreckMock.calledMethod(0).options.payload).to.equal($6)",
+		   "\t\texpect(WreckMock.calledMethod(0).options.headers).to.equal($7)",
+		   "\t\texpect(WreckMock.calledMethod(0).options.timeout).to.equal($8)",
+		   "\t})",
+		   "})",
+		   ""
+	   ]
+   },
+   "Mysql Test experiment": {
+	   "prefix": "lab-mysql-experiment",
+	   "body": [
+		   "'use strict'",
+		   "",
+		   "const { expect } = require('@hapi/code')",
+		   "const Mockery = require('mockery')",
+		   "const MysqlMock = require('@flitsmeister/test/mocks/mysql')",
+		   "",
+		   "const { experiment, before, after, afterEach, test } = exports.lab = require('@hapi/lab').script()",
+		   "const fmtest = require('@flitsmeister/test/utils').fmtest(test)",
+		   "",
+		   "const _this = this",
+		   "",
+		   "experiment('$1', () => {",
+		   "\tbefore(() => {",
+		   "\t\tMockery.enable({warnOnReplace: false, warnOnUnregistered: false, useCleanCache: true})",
+		   "\t\tMockery.registerMock('mysql', MysqlMock)",
+		   "",
+		   "\t\t_this.$2 = require('../../$3')",
+		   "",
+		   "\t\trequire('@flitsmeister/utils/providers/mysql').connect()",
+		   "\t})",
+		   "",
+		   "\tafter(() => {",
+		   "\t\tMockery.deregisterAll()",
+		   "\t\tMockery.disable()",
+		   "\t})",
+		   "",
+		   "\tafterEach(() => {",
+		   "\t\tMysqlMock.clear()",
+		   "\t})",
+		   "",
+		   "\tfmtest('$4', function *() {",
+		   "\t\tMysqlMock.addResponse([])",
+		   "\t\t$0",
+		   "\t})",
+		   "})",
+		   ""
+	   ]
+   },
+   "Handler Test experiment": {
+	   "prefix": "lab-handler-experiment",
+	   "body": [
+		   "'use strict'",
+		   "",
+		   "const { expect } = require('@hapi/code')",
+		   "const Mockery = require('mockery')",
+		   "const HapiResponseMock = require('@flitsmeister/test/mocks/hapi-response')",
+		   "const UniMock = require('@flitsmeister/test/unimock')",
+		   "",
+		   "const { experiment, before, after, afterEach, test } = exports.lab = require('@hapi/lab').script()",
+		   "const fmtest = require('@flitsmeister/test/utils').fmtest(test)",
+		   "",
+		   "const _this = this",
+		   "",
+		   "experiment('$1', () => {",
+		   "\tbefore(() => {",
+		   "\t\tMockery.enable({warnOnReplace: false, warnOnUnregistered: false, useCleanCache: true})",
+		   "\t\t_this.$2 = UniMock()",
+		   "\t\tMockery.registerMock('$3', _this.$2)",
+		   "",
+		   "\t\t_this.$4 = require('../../handlers/$5')",
+		   "\t})",
+		   "",
+		   "\tafter(() => {",
+		   "\t\tMockery.deregisterAll()",
+		   "\t\tMockery.disable()",
+		   "\t})",
+		   "",
+		   "\tafterEach(() => {",
+		   "\t\tHapiResponseMock.clear()",
+		   "\t\t_this.$2.clear()",
+		   "\t})",
+		   "",
+		   "\tfmtest('$6', function *() {",
+		   "\t\t_this.$2.addResponse()",
+		   "\t\t$0",
+		   "\t\texpect(HapiResponseMock.getCode()).to.equal(200)",
+		   "\t\texpect(HapiResponseMock.getResponses()).to.equal([])",
+		   "\t})",
+		   "})",
+		   ""
+	   ]
+   },
+   "Import yield-yield module": {
+	   "prefix": "sync",
+	   "body": "const Sync = require('yield-yield')"
+   },
+   "Import wreck module": {
+	   "prefix": "wreck",
+	   "body": "const Wreck = require('@hapi/wreck')"
+   },
+   "Import moment module": {
+	   "prefix": "moment",
+	   "body": "const Moment = require('moment')"
+   },
+   "Import mysql module": {
+	   "prefix": "mysql",
+	   "body": "const Mysql = require('@flitsmeister/utils/providers/mysql')"
+   },
+   "Import geolib module": {
+	   "prefix": "geolib",
+	   "body": "const Geolib = require('@flitsmeister/geolib')"
+   },
+   "Import geohash module": {
+	   "prefix": "geohash",
+	   "body": "const Geohash = require('ngeohash')"
+   },
+   "Import fs module": {
+	   "prefix": "fs",
+	   "body": "const Fs = require('fs')"
+   },
+   "Add yield-yield setTimeout": {
+	   "prefix": "yieldTimeout",
+	   "body": "yield setTimeout(yield, $1)"
+   },
+   "Add wreck mock": {
+	   "prefix": "wreckMock",
+	   "body": "const WreckMock = require('@flitsmeister/test/mocks/wreck')"
+   },
+   "Add mysql mock": {
+	   "prefix": "mysqlMock",
+	   "body": "const MysqlMock = require('@flitsmeister/test/mocks/mysql')"
+   },
+   "Add unimock": {
+	   "prefix": "unimock",
+	   "body": "const UniMock = require('@flitsmeister/test/unimock')"
+   },
+   "FMTest": {
+	   "prefix": "fmtest",
+	   "body": [
+		   "fmtest('$1', function *() {",
+		   "\t$2",
+		   "\texpect().to.equal()",
+		   "})"
+	   ]
+   }
+}

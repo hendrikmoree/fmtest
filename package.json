@@ -23,7 +23,11 @@
         ],
 	"menus": {
             "touchBar": [{"command": "extension.toggleOnly"}]
-        }
+        },
+        "snippets": [{
+            "language": "javascript",
+            "path": "./snippets.json"
+        }]
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
