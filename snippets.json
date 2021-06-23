@@ -68,7 +68,7 @@
 		   "experiment('$1', () => {",
 		   "\tbefore(() => {",
 		   "\t\tMockery.enable({warnOnReplace: false, warnOnUnregistered: false, useCleanCache: true})",
-		   "\t\tMockery.registerMock('@hapi/wreck', WreckMock)",
+		   "\t\tMockery.registerMock('@flitsmeister/utils/fm_wreck', WreckMock)",
 		   "\t})",
 		   "",
 		   "\tafter(() => {",
@@ -185,7 +185,7 @@
 			"",
 			"const { expect } = require('@hapi/code')",
 			"const Sync = require('yield-yield')",
-			"const Wreck = require('@hapi/wreck')",
+			"const Wreck = require('@flitsmeister/utils/fm_wreck')",
 			"",
 			"const MockServer = require('@flitsmeister/test/mocks/mockserver')",
 			"",
@@ -209,7 +209,7 @@
 			"\t})",
 			"})"
 	   ]
-   }
+   },
    "Import yield-yield module": {
 	   "prefix": "sync",
 	   "body": "const Sync = require('yield-yield')"
