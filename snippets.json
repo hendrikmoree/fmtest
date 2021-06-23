@@ -24,6 +24,7 @@
 		   "",
 		   "const { expect } = require('@hapi/code')",
 		   "const Mockery = require('mockery')",
+		   "const UniMock = require('@flitsmeister/test/unimock')",
 		   "",
 		   "const { experiment, before, after, afterEach, test } = exports.lab = require('@hapi/lab').script()",
 		   "const fmtest = require('@flitsmeister/test/utils').fmtest(test)",
@@ -177,13 +178,45 @@
 		   ""
 	   ]
    },
+   "Mockserver Integrationt test experiment": {
+	   "prefix": "mockserver-int-test",
+	   "body": [
+			"'use strict'",
+			"",
+			"const { expect } = require('@hapi/code')",
+			"const Sync = require('yield-yield')",
+			"const Wreck = require('@hapi/wreck')",
+			"",
+			"const MockServer = require('@flitsmeister/test/mocks/mockserver')",
+			"",
+			"const { experiment, afterEach, test } = exports.lab = require('@hapi/lab').script()",
+			"const fmtest = require('@flitsmeister/test/utils').fmtest(test)",
+			"",
+			"experiment('$1', () => {",
+			"",
+			"\tafterEach(() => new Promise((resolve, reject) => {",
+			"\t\tSync.run(function *() {",
+			"\t\t\tyield MockServer.clear()",
+			"\t\t\tresolve()",
+			"\t\t})",
+			"\t}))",
+			"",
+			"\tfmtest('$2', function *() {",
+			"\t\tyield MockServer.addResponse()",
+			"",
+			"\t\tconst { payload } = yield Wreck.get(`http://localhost:${process.env.HTTP_PORT}/$3`)",
+			"\t\texpect(JSON.parse(payload)).to.equal({ $4 })",
+			"\t})",
+			"})"
+	   ]
+   }
    "Import yield-yield module": {
 	   "prefix": "sync",
 	   "body": "const Sync = require('yield-yield')"
    },
    "Import wreck module": {
 	   "prefix": "wreck",
-	   "body": "const Wreck = require('@hapi/wreck')"
+	   "body": "const Wreck = require('@flitsmeister/utils/fm_wreck')"
    },
    "Import moment module": {
 	   "prefix": "moment",
