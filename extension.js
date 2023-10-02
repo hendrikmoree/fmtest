@@ -25,6 +25,7 @@ exports.activate = (context) => {
 
         let lineNrTest = null
         let lineNrExp = null
+        let lineNrDesc = null
         for (let i = linesBefore.length - 1; i >= 0; --i) {
             if (linesBefore[i].startsWith('    fmtest') && lineNrTest === null) {
                 lineNrTest = i
@@ -32,30 +33,26 @@ exports.activate = (context) => {
             if (linesBefore[i].startsWith('experiment') && lineNrExp === null) {
                 lineNrExp = i
             }
+            if (linesBefore[i].startsWith('describe') && lineNrDesc === null) {
+                lineNrDesc = i
+            }
         }
 
-        if (lineNrExp === null && lineNrTest === null) return
+        if (lineNrExp === null && lineNrTest === null && lineNrDesc === null) return
 
         editor.edit((editBuilder) => {
 
-            let lineNr
-            let newLine
-            if (lineNrTest === null) {
-                newLine = lines[lineNrExp]
-                if (newLine.indexOf('experiment.only') > -1) {
-                    newLine = newLine.replace('experiment.only', 'experiment')
-                } else {
-                    newLine = newLine.replace('experiment', 'experiment.only')
-                }
-                lineNr = lineNrExp
+            const lineNr = Math.max(lineNrTest, lineNrExp, lineNrDesc)
+            let newLine = lines[lineNr]
+
+            let replace = 'fmtest'
+            if (lineNr === lineNrExp) replace = 'experiment'
+            if (lineNr === lineNrDesc) replace = 'describe'
+
+            if (newLine.indexOf(`${replace}.only`) > -1) {
+                newLine = newLine.replace(`${replace}.only`, replace)
             } else {
-                newLine = lines[lineNrTest]
-                if (newLine.indexOf('fmtest.only') > -1) {
-                    newLine = newLine.replace('fmtest.only', 'fmtest')
-                } else {
-                    newLine = newLine.replace('fmtest', 'fmtest.only')
-                }
-                lineNr = lineNrTest
+                newLine = newLine.replace(replace, `${replace}.only`)
             }
 
             editBuilder.replace(new vscode.Range(lineNr, 0, lineNr, 1000), newLine)
