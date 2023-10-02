@@ -17,7 +17,7 @@
 		   "}"
 	   ]
    },
-   "Test experiment": {
+   "LAB Test experiment": {
 	   "prefix": "lab-experiment",
 	   "body": [
 		   "'use strict'",
@@ -49,6 +49,37 @@
 		   ""
 	   ]
    },
+   "Mocha Test experiment": {
+	"prefix": "mocha-experiment",
+	"body": [
+		"'use strict'",
+		"",
+		"const { expect } = require('@hapi/code')",
+		"const Mockery = require('mockery')",
+		"const UniMock = require('@flitsmeister/test/unimock')",
+		"",
+		"const fmtest = require('@flitsmeister/test/utils').fmtest()",
+		"",
+		"describe('$1', () => {",
+		"\tbefore(() => {",
+		"\t\tMockery.enable({warnOnReplace: false, warnOnUnregistered: false, useCleanCache: true})",
+		"\t})",
+		"",
+		"\tafter(() => {",
+		"\t\tMockery.deregisterAll()",
+		"\t\tMockery.disable()",
+		"\t})",
+		"",
+		"\tafterEach(() => {",
+		"\t})",
+		"",
+		"\tfmtest('$2', function *() {",
+		"\t\t$0",
+		"\t})",
+		"})",
+		""
+	]
+},
    "Wreck Test experiment": {
 	   "prefix": "lab-wreck-experiment",
 	   "body": [
