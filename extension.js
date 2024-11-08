@@ -24,11 +24,15 @@ exports.activate = (context) => {
         const linesBefore = lines.slice(0, location.start.line + 1)
 
         let lineNrTest = null
+        let lineNrIt = null
         let lineNrExp = null
         let lineNrDesc = null
         for (let i = linesBefore.length - 1; i >= 0; --i) {
             if (linesBefore[i].startsWith('    fmtest') && lineNrTest === null) {
                 lineNrTest = i
+            }
+            if (linesBefore[i].startsWith('    it') && lineNrIt === null) {
+                lineNrIt = i
             }
             if (linesBefore[i].startsWith('experiment') && lineNrExp === null) {
                 lineNrExp = i
@@ -38,14 +42,15 @@ exports.activate = (context) => {
             }
         }
 
-        if (lineNrExp === null && lineNrTest === null && lineNrDesc === null) return
+        if (lineNrExp === null && lineNrTest === null && lineNrIt === null && lineNrDesc === null) return
 
         editor.edit((editBuilder) => {
 
-            const lineNr = Math.max(lineNrTest, lineNrExp, lineNrDesc)
+            const lineNr = Math.max(lineNrTest, lineNrExp, lineNrDesc, lineNrIt)
             let newLine = lines[lineNr]
 
             let replace = 'fmtest'
+            if (lineNr === lineNrIt) replace = 'it'
             if (lineNr === lineNrExp) replace = 'experiment'
             if (lineNr === lineNrDesc) replace = 'describe'
 
